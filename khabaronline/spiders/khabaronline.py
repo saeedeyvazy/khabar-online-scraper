@@ -1,7 +1,14 @@
 from pathlib import Path
 
 import scrapy
+import logging
 
+logging.basicConfig(level=logging.INFO, 
+                    format='[%(asctime)s] {%(name)s} %(levelname)s:  %(message)s', 
+                    datefmt='%y-%m-%d %H:%M:%S', 
+                    filename="khabar-online.log",
+                    ) 
+logger = logging.getLogger('KHABAR_ONLINE_LOGGER') 
 
 class QuotesSpider(scrapy.Spider):
     name = "khabaronline"
@@ -25,12 +32,11 @@ class QuotesSpider(scrapy.Spider):
             file =  video.get()
             result = 'STARTP ' + response.css('p.summary::text').get()
         else:
-            text_list = response.css('div.item-text p::text')
-            result = 'STARTP' + '،'.join(text_list[1].get().split('،')[1:]) + "\n\n"
+            text_list = response.xpath('/html/body/main/div/div[1]/div[1]/article/div[3]/p//text()').getall()
+
+            result = 'STARTP' + text_list[0] + "\n\n"
             file = response.css('figure.item-img img::attr(src)').get()
 
-            for i in range(2, len(text_list) - 1) :
-                result += 'STARTP' + text_list[i].get() + "\n\n"
             
         yield{'title' : title, 'text' : result, 'file':file, 'url':response.request.url}
 
