@@ -26,18 +26,26 @@ class QuotesSpider(scrapy.Spider):
         title = response.css('h1.title a::text').get()
         video = response.css('video source::attr(src)')
         file=""
-        text_list=""
+        result = 'STARTP ' + response.css('p.summary::text').get() + '\n'
         
         if len(video) != 0 :
             file =  video.get()
-            result = 'STARTP ' + response.css('p.summary::text').get()
-        else:
-            text_list = response.xpath('/html/body/main/div/div[1]/div[1]/article/div[3]/p//text()').getall()
+            yield{'title' : title, 'text' : result, 'file':file, 'url':response.request.url}
+        # else:
+        #     text_list = response.xpath('/html/body/main/div/div[1]/div[1]/article/div[3]/p//text()').getall()
+        #     result = 'STARTP' + text_list[0] + "\n\n"
+        #     file = response.css('figure.item-img img::attr(src)').get()
 
-            result = 'STARTP' + text_list[0] + "\n\n"
-            file = response.css('figure.item-img img::attr(src)').get()
-
+        # else:
             
-        yield{'title' : title, 'text' : result, 'file':file, 'url':response.request.url}
+        #     result += 'STARTP' + ' '.join(response.xpath('/html/body/main/div/div[1]/div[1]/article/div[4]/div[1]/p[1]//text()').getall()) + '\n'
+
+        #     file = response.css('figure.item-img img::attr(src)').get()
+        #     bottomFileList = response.xpath('/html/body/main/div/div[1]/div[1]/article/div[4]/div[1]/p/img/@src').getall()
+        #     if bottomFileList != None:
+        #          for item in bottomFileList:
+        #              file += "$$" + item
+                
+        
 
         
