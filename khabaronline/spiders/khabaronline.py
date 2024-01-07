@@ -26,7 +26,9 @@ class QuotesSpider(scrapy.Spider):
         title = response.css('h1.title a::text').get()
         video = response.css('video source::attr(src)')
         file=""
-        result = 'STARTP ' + response.css('p.summary::text').get() + '\n'
+        summary = response.css('p.summary::text').get()
+        title = title.replace('ببینید |','',1)
+        result = 'STARTP ' + summary + '\n'
         
         if len(video) != 0 :
             file =  video.get()
